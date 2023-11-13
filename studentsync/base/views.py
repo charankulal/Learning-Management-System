@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Room,Topic
+from .models import Room,Topic,Message
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
@@ -46,7 +46,17 @@ def home(request):
 def room(request,pk):
     rooms=Room.objects.get(id=pk)
     roommessages=rooms.message_set.all().order_by('-created')
-    context={'rooms':rooms,'roommessages':roommessages}
+    participants=rooms.participants.all()
+    if request.method=="POST":
+        message=Message.objects.create(
+            user=request.user,
+            room=rooms,
+            body=request.POST.get('body')
+        )
+        rooms.participants.add(request.user)
+        return redirect('room',pk=rooms.id)
+    
+    context={'rooms':rooms,'roommessages':roommessages,'participants':participants}
             
     return render(request,'base/room.html',context)
 
@@ -109,3 +119,12 @@ def registerUser(request):
             
     return render(request,'base/login_register.html',context)
 
+@login_required(login_url='login')
+def deleteMessage(request,pk):
+    roomMessage=Message.objects.get(id=pk)
+    if request.user != roomMessage.user:
+        return HttpResponse('You are not allowed to delete!!')
+    if request.method=="POST":
+        roomMessage.delete()
+        return redirect('home')
+    return render(request,'base/delete.html',{'obj':roomMessage})
