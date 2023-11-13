@@ -1,3 +1,4 @@
+{% load static %}
 <header class="header header--loggedIn">
   <div class="container">
     <a href="{% url 'home' %}" class="header__logo">
@@ -35,7 +36,7 @@
       {% else %}
       <!-- Not Logged In -->
           <a href="{% url 'login' %}">
-            <img src="./assets/avatar.svg" />
+            <img src="{% static 'images/avatar.svg' %}" />
             <p>Login</p>
           </a>
           {% endif %}
@@ -66,12 +67,3 @@
   </div>
 </header>
 
-
-<!-- {% if request.user.is_authenticated %}
-<p>Hello {{request.user}}</p>
-<a href="{% url 'logout' %}">Log Out</a>
-{% else %}
-<a href="{% url 'login' %}">Login</a>
-{% endif %}
-
-<hr /> -->
