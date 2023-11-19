@@ -70,6 +70,7 @@ def room(request, pk):
 
 @login_required(login_url='login')
 def createRoom(request):
+    buttonTitle="Create"
     form = RoomForm
     topics= Topic.objects.all()
     if request.method == "POST":
@@ -82,12 +83,13 @@ def createRoom(request):
             description=request.POST.get('description'),
         )
         return redirect('home')
-    context = {'form': form,'topics':topics}
+    context = {'form': form,'topics':topics,'buttonTitle':buttonTitle}
     return render(request, 'base/room_form.html', context)
 
 
 @login_required(login_url='login')
 def updateRoom(request, pk):
+    buttonTitle="Update"
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
     topics= Topic.objects.all()
@@ -97,9 +99,12 @@ def updateRoom(request, pk):
     if request.method == "POST":
         topic_name=request.POST.get('topic')
         topic,created=Topic.objects.get_or_create(name=topic_name)
-        form = RoomForm(request.POST, instance=room)
+        room.name=request.POST.get('name')
+        room.topic=topic
+        room.description=request.POST.get('description')
+        room.save()
         return redirect("home")
-    context = {"form": form,"topics":topics,"room":room}
+    context = {"form": form,"topics":topics,"room":room,"buttonTitle":buttonTitle}
     return render(request, 'base/room_form.html', context)
 
 @login_required(login_url='login')
