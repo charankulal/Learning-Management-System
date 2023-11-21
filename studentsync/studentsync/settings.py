@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,9 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'base.apps.BaseConfig',
-    'rest_framework',
+    
     'corsheaders',
 ]
+
+AUTH_USER_MODEL='base.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
